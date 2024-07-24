@@ -1,5 +1,5 @@
 import React from "react";
-import { setRole } from "./roleManagement";
+import { setRole, setUserId } from "./roleManagement";
 
 import { useSnackbar } from "notistack";
 
@@ -12,11 +12,12 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { ROLE } from "../../constents";
 
+import useGetUsers from "../../hooks/useGetUsers";
+
 const Login = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userRole = useSelector((state) => state.roleManager.value);
   const { enqueueSnackbar } = useSnackbar();
 
   const setEnqueueSnackbar = (msg, snackerVariant) => {
@@ -25,21 +26,36 @@ const Login = () => {
       autoHideDuration: 3000,
     });
   };
+
+  const { data: users } = useGetUsers();
+
+  const validateUser = (values) => {
+    console.log("values", values);
+    console.log("users", users);
+    const validateUser =
+      users &&
+      users?.find(
+        (element) =>
+          element.userName === values.userName &&
+          element.password === values.password
+      );
+    if (validateUser) {
+      dispatch(setUserId(validateUser.userId));
+    }
+    return validateUser ? true : false;
+  };
+
   const handleSubmit = async (values, actions) => {
-    dispatch(setRole("Admin"));
-    if (values.username === ROLE.USER && values.password === ROLE.USER) {
-      dispatch(setRole(ROLE.USER));
-      setEnqueueSnackbar("User Logged in Succesfully", "success");
-      navigate("/listProducts");
-    } else if (
-      values.username === ROLE.ADMIN &&
-      values.password === ROLE.ADMIN
-    ) {
+    if (values.userName === ROLE.ADMIN && values.password === ROLE.ADMIN) {
       dispatch(setRole(ROLE.ADMIN));
       setEnqueueSnackbar(" Admin Logged Successfully", "success");
       navigate("/listProducts");
+    } else if (validateUser(values)) {
+      dispatch(setRole(ROLE.USER));
+      setEnqueueSnackbar("User Logged in Succesfully", "success");
+      navigate("/listProducts");
     } else {
-      setEnqueueSnackbar("User not found", "error");
+      setEnqueueSnackbar("Authentication Failed", "error");
     }
   };
 
@@ -51,14 +67,14 @@ const Login = () => {
         </Typography>
         <AccountCircle className={classes.icon} /> */}
         <Formik
-          initialValues={{ username: "", password: "" }}
+          initialValues={{ userName: "", password: "" }}
           onSubmit={(values, action) => {
             handleSubmit(values, action);
           }}
           validate={(values) => {
             const errors = {};
-            if (!values.username) {
-              errors.username = "Username is required";
+            if (!values.userName) {
+              errors.userName = "Username is required";
             }
             if (!values.password) {
               errors.password = "Password is required";
@@ -70,8 +86,8 @@ const Login = () => {
             <Form className={classes.form}>
               <Field
                 as={TextField}
-                type="username"
-                name="username"
+                type="userName"
+                name="userName"
                 label="Username"
                 variant="outlined"
               />

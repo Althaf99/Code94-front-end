@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button, Grid } from "@mui/material";
@@ -6,18 +6,21 @@ import { AddCircleOutlineOutlined, StarTwoTone } from "@mui/icons-material";
 
 import PageLayout from "../../../components/PageLayout";
 import SearchBar from "../../../components/SearchBar";
+import DataTable from "../../../components/DataTable";
 
 import useGetProducts from "../../../hooks/useGetProducts";
 
 import styles from "./styles";
 import ProductOptionalPanel from "./optionalPanel";
-import DataTable from "../../../components/DataTable";
+
+import axios from "axios";
 
 const ListProducts = () => {
   const classes = styles();
   const navigate = useNavigate();
 
   const [itemName, setItemName] = useState();
+  const [favorites, setFavorites] = useState([]);
 
   const [selectedProduct, setSelectedProduct] = useState();
 
@@ -33,6 +36,8 @@ const ListProducts = () => {
     console.log("Hello");
     navigate(`/addProduct`);
   };
+
+  const vendorId = 1;
 
   const columns = [
     {
@@ -89,6 +94,7 @@ const ListProducts = () => {
           <ProductOptionalPanel
             values={values}
             setSelectedProduct={setSelectedProduct}
+            setFavorites={setFavorites}
           />
         );
       },
