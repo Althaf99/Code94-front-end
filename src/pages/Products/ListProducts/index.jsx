@@ -33,7 +33,6 @@ const ListProducts = () => {
     element.no = no;
   });
   const handleCreateProduct = () => {
-    console.log("Hello");
     navigate(`/addProduct`);
   };
 

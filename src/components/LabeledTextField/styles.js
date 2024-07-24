@@ -1,32 +1,36 @@
 import { css } from "@emotion/react";
 
 const styles = () => {
-  const containerStyles = css`
+  const container = css`
     display: flex;
     flex-direction: column;
   `;
 
-  const labelStyles = css``;
+  const label = css`
+    padding-top: 10px;
+    font-size: 19px;
+    font-weight: 500;
+  `;
 
-  const requiredStyles = css`
+  const required = css`
     color: red;
   `;
 
-  const invalidStyles = css`
+  const invalid = css`
     color: red;
     font-size: 12px;
   `;
 
-  const errorTextFieldStyles = css`
+  const errorTextField = css`
     border-color: red !important;
   `;
 
   return {
-    containerStyles,
-    labelStyles,
-    requiredStyles,
-    invalidStyles,
-    errorTextFieldStyles,
+    container,
+    label,
+    required,
+    invalid,
+    errorTextField,
   };
 };
 

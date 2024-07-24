@@ -15,31 +15,29 @@ const LabeledTextField = ({
   const classes = styles();
 
   return (
-    <Grid item container>
+    <Grid item container flexWrap={"wrap"} columnSpacing={3}>
       <Grid item sx={classes.label}>
         {label}
       </Grid>
       <Grid item>
-        <FormControl size="small" fullWidth sx={classes.textBox}>
-          <TextField
-            variant="outlined"
-            size="small"
-            inputProps={
-              errors &&
-              errors[name] && {
-                classes: {
-                  notchedOutline: classes.errorTextField,
-                },
-              }
+        <TextField
+          variant="outlined"
+          size="small"
+          inputProps={
+            errors &&
+            errors[name] && {
+              classes: {
+                notchedOutline: classes.errorTextField,
+              },
             }
-            name={name}
-            onChange={(e) => {
-              onChange(e.target.value);
-            }}
-            {...rest}
-          />
-          {errors && errors[name] && <p sx={classes.invalid}>{errors[name]}</p>}
-        </FormControl>
+          }
+          name={name}
+          onChange={(e) => {
+            onChange(e.target.value);
+          }}
+          {...rest}
+        />
+        {errors && errors[name] && <p sx={classes.invalid}>{errors[name]}</p>}
       </Grid>
     </Grid>
   );

@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 
 import AccountMenu from "../UserProfileButton";
 
-const PageLayout = ({ pageHeading, children, pageActions }) => {
+const PageLayout = ({ pageHeading, children, subHeading }) => {
   const classes = styles();
 
   const userRole = useSelector((state) => state.roleManager.value);
@@ -22,9 +22,15 @@ const PageLayout = ({ pageHeading, children, pageActions }) => {
           <AccountMenu />
         </Grid>
       </Grid>
-      <Grid item container sx={classes.headingTitle}>
-        {pageHeading}
+      <Grid item container>
+        <Grid item sx={classes.headingTitle}>
+          {pageHeading}
+        </Grid>
+        <Grid item sx={classes.subHeading}>
+          {subHeading}
+        </Grid>
       </Grid>
+
       <Grid item container sx={classes.section}>
         {children}
       </Grid>

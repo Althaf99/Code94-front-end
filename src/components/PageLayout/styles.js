@@ -7,7 +7,7 @@ const styles = (theme) => {
     background-color: #ffffff;
     padding: 90px;
     min-height: 100vh;
-    padding-top: 60px;
+    padding-top: 20px;
   `;
   const headingTitle = css`
     font-family: Satoshi, sans-serif;
@@ -16,7 +16,7 @@ const styles = (theme) => {
     font-style: normal !important;
     font-weight: 900;
     font-size: 36px !important;
-    line-height: 48px;
+    line-height: 38px;
     color: ${colorPallet.black};
     text-transform: uppercase;
   `;
@@ -27,7 +27,7 @@ const styles = (theme) => {
     padding-top: 30px;
   `;
   const pageActions = css`
-    padding-bottom: 50px;
+    padding-bottom: 20px;
   `;
 
   const roleName = css`

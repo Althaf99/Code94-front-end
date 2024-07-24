@@ -1,4 +1,4 @@
-const ArrowIcon = ({ width = 32, height = 32, fill = "none" }) => {
+const ArrowIcon = ({ width = "37px", height = "37px", fill = "none" }) => {
   return (
     <svg
       width={width}
@@ -9,7 +9,7 @@ const ArrowIcon = ({ width = 32, height = 32, fill = "none" }) => {
     >
       <path
         d="M9 24.5714L17.5714 16L9 7.42857L10.7143 4L22.7143 16L10.7143 28L9 24.5714Z"
-        fill={fill}
+        fill={"#001EB9"}
       />
     </svg>
   );
