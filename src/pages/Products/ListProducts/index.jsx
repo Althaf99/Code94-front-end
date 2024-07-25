@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button, Grid } from "@mui/material";
@@ -13,8 +13,6 @@ import useGetProducts from "../../../hooks/useGetProducts";
 import styles from "./styles";
 import ProductOptionalPanel from "./optionalPanel";
 
-import axios from "axios";
-
 const ListProducts = () => {
   const classes = styles();
   const navigate = useNavigate();
@@ -24,6 +22,8 @@ const ListProducts = () => {
 
   const [selectedProduct, setSelectedProduct] = useState();
 
+  console.log("selectedProduct", selectedProduct);
+
   const itemNamesArray = [];
 
   const { data: products } = useGetProducts();
@@ -32,16 +32,27 @@ const ListProducts = () => {
     no = no + 1;
     element.no = no;
   });
+
   const handleCreateProduct = () => {
     navigate(`/addProduct`);
   };
-
-  const vendorId = 1;
 
   const columns = [
     {
       Header: "ID",
       accessor: "id",
+    },
+    {
+      Header: "PRODUCT_ID",
+      accessor: "productId",
+    },
+    {
+      Header: "Product Description",
+      accessor: "productDescription",
+    },
+    {
+      Header: "Quantity",
+      accessor: "qty",
     },
     {
       Header: "No",
@@ -59,10 +70,24 @@ const ListProducts = () => {
     },
     {
       Header: "Image",
-      accessor: "image",
+      accessor: "images",
       headerStyles: { textAlign: "center" },
       cellStyles: { textAlign: "center" },
       width: "20%",
+      Cell: ({ value }) => {
+        // Display the first image if available
+        if (value && value.length > 0) {
+          return (
+            <img
+              src={`/${value[0]}`}
+              alt="Product"
+              style={{ width: "50px", height: "50px", objectFit: "cover" }}
+            />
+          );
+        } else {
+          return <span>No Image</span>;
+        }
+      },
     },
     {
       Header: "Product Name",
@@ -135,7 +160,7 @@ const ListProducts = () => {
             columns={columns}
             hasNextPage={false}
             data={products}
-            hiddenColumns={["id"]}
+            hiddenColumns={["id", "productId", "productDescription"]}
             maxHeightInRows={15}
             customProps={{ height: "565px" }}
             onClickTableRow={(index, row) => {}}
@@ -145,4 +170,5 @@ const ListProducts = () => {
     </PageLayout>
   );
 };
+
 export default ListProducts;

@@ -6,6 +6,7 @@ import DeleteIcon from "../../../icons/deleteIcon";
 import EditIcon from "../../../icons/editIcon";
 import StarIcon from "../../../icons/startIcon";
 import StarredIcon from "../../../icons/starredIcon";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
@@ -21,23 +22,34 @@ import { useSelector } from "react-redux";
 
 import useCreateFavorites from "../../../hooks/useCreateFavorites";
 import useDeletefavorites from "../../../hooks/useDeleteFavorites";
+import useDeleteProduct from "../../../hooks/useDeleteProduct";
+import AlertDialogBox from "../../../components/AlertDialogBox";
+import { useNavigate } from "react-router-dom";
 
 const ProductOptionalPanel = ({ values, setSelectedProduct }) => {
+  const navigate = useNavigate();
   // const deleteMutation = useDeletDeliveryNote({
   //   id: values?.id,
   // });
+  const [openDialogBox, setOpenDialogBox] = useState(false);
 
+  console.log("productId", values.productId);
   const { mutateAsync: createFavorites } = useCreateFavorites();
   const { mutateAsync: deleteFavorites } = useDeletefavorites();
+  const deleteMutation = useDeleteProduct({
+    productId: values?.productId,
+  });
 
   const userId = useSelector((state) => state.roleManager.userId);
 
-  console.log("userId", userId);
   const [isFavorite, setIsFavorite] = useState(false);
   const handleDelete = async () => {
-    // await deleteMutation.mutateAsync({});
+    setOpenDialogBox(true);
   };
   const handleEdit = (values) => {
+    navigate(`/addProduct`, {
+      state: { productData: values },
+    });
     setSelectedProduct(values);
   };
   const [favorites, setFavorites] = useState([]);
@@ -57,6 +69,13 @@ const ProductOptionalPanel = ({ values, setSelectedProduct }) => {
   const handleMarkStart = (values) => {
     setIsFavorite(!isFavorite);
     onFavoriteToggle(values?.productId, !isFavorite);
+  };
+
+  const handleCloseDialogBox = () => {
+    setOpenDialogBox(false);
+  };
+  const handleDeleteProduct = async () => {
+    await deleteMutation.mutateAsync({});
   };
 
   return (
@@ -114,6 +133,27 @@ const ProductOptionalPanel = ({ values, setSelectedProduct }) => {
           {isFavorite ? <StarredIcon /> : <StarIcon />}
         </IconButton>
       </Stack>
+      <AlertDialogBox
+        open={openDialogBox}
+        handleClose={handleCloseDialogBox}
+        buttonCancelText="Cancel"
+        title="ARE YOU SURE"
+        content={<>You will not be able to undo this action if you proceed</>}
+        handleOk={handleDeleteProduct}
+        buttonConfirmText={"DELETE"}
+        icon={
+          <CheckCircleOutlineIcon
+            style={{
+              alignSelf: "center",
+              width: "42px",
+              height: "42px",
+              position: "absolute",
+              marginTop: "25px",
+              color: "#FF7C7C",
+            }}
+          />
+        }
+      />
     </Grid>
   );
 };
