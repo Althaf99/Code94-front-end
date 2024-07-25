@@ -1,24 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { setRole, setUserId } from "./roleManagement";
+
+import LabeledTextField from "../LabeledTextField";
 
 import { useSnackbar } from "notistack";
 
 import { TextField, Button, Typography, Box, Grid } from "@mui/material";
-import { Formik, Form, Field } from "formik";
 import { useNavigate } from "react-router-dom";
 
-import { useStyles } from "./styles";
 import { useDispatch, useSelector } from "react-redux";
+
+import styles from "./styles";
 
 import { ROLE } from "../../constents";
 
 import useGetUsers from "../../hooks/useGetUsers";
 
+import Logo from "../../logo.png";
+
 const Login = () => {
-  const classes = useStyles();
+  const classes = styles();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+
+  const [userName, setUserName] = useState();
+  const [password, setPassword] = useState();
 
   const setEnqueueSnackbar = (msg, snackerVariant) => {
     enqueueSnackbar(msg, {
@@ -29,15 +36,12 @@ const Login = () => {
 
   const { data: users } = useGetUsers();
 
-  const validateUser = (values) => {
-    console.log("values", values);
-    console.log("users", users);
+  const validateUser = ({ userName, password }) => {
     const validateUser =
       users &&
       users?.find(
         (element) =>
-          element.userName === values.userName &&
-          element.password === values.password
+          element.userName === userName && element.password === password
       );
     if (validateUser) {
       dispatch(setUserId(validateUser.userId));
@@ -45,12 +49,12 @@ const Login = () => {
     return validateUser ? true : false;
   };
 
-  const handleSubmit = async (values, actions) => {
-    if (values.userName === ROLE.ADMIN && values.password === ROLE.ADMIN) {
+  const handleSubmit = async ({ userName, password }) => {
+    if (userName === ROLE.ADMIN && password === ROLE.ADMIN) {
       dispatch(setRole(ROLE.ADMIN));
       setEnqueueSnackbar(" Admin Logged Successfully", "success");
       navigate("/listProducts");
-    } else if (validateUser(values)) {
+    } else if (validateUser({ userName, password })) {
       dispatch(setRole(ROLE.USER));
       setEnqueueSnackbar("User Logged in Succesfully", "success");
       navigate("/listProducts");
@@ -60,55 +64,42 @@ const Login = () => {
   };
 
   return (
-    <Grid className={classes.body}>
-      <Grid className={classes.container}>
-        {/* <Typography variant="h4" className={classes.heading}>
-          Newman's College
-        </Typography>
-        <AccountCircle className={classes.icon} /> */}
-        <Formik
-          initialValues={{ userName: "", password: "" }}
-          onSubmit={(values, action) => {
-            handleSubmit(values, action);
-          }}
-          validate={(values) => {
-            const errors = {};
-            if (!values.userName) {
-              errors.userName = "Username is required";
-            }
-            if (!values.password) {
-              errors.password = "Password is required";
-            }
-            return errors;
-          }}
-        >
-          {({ isValid = false }) => (
-            <Form className={classes.form}>
-              <Field
-                as={TextField}
-                type="userName"
-                name="userName"
-                label="Username"
-                variant="outlined"
-              />
-              <Field
-                as={TextField}
-                name="password"
-                label="Password"
-                type="password"
-                variant="outlined"
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={!isValid} // Disable the button when the form is invalid
-              >
-                Login
-              </Button>
-            </Form>
-          )}
-        </Formik>
+    <Grid sx={classes.body}>
+      <Grid item container sx={classes.container} rowGap={4}>
+        <Grid xs={12}>
+          <img src={Logo} alt="react logo" sx={classes.image} />
+        </Grid>
+        <Grid xs={12}>
+          <LabeledTextField
+            id="userName"
+            name="userName"
+            label="User Name"
+            placeholder="User Name"
+            onChange={(value) => setUserName(value)}
+            value={userName}
+          />
+        </Grid>
+        <Grid xs={12}>
+          <LabeledTextField
+            id="password"
+            name="password"
+            label="Password"
+            placeholder="Password"
+            onChange={(value) => setPassword(value)}
+            value={password}
+          />
+        </Grid>
+        <Grid xs={12}>
+          <Button
+            onClick={() => {
+              handleSubmit({ userName, password });
+            }}
+            variant="contained"
+            fullWidth
+          >
+            Login
+          </Button>
+        </Grid>
       </Grid>
     </Grid>
   );

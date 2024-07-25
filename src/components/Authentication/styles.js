@@ -1,52 +1,56 @@
-// import { makeStyles } from "@material-ui/styles";
-// import { makeStyles } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { css } from "@emotion/react";
 
-export const useStyles = makeStyles((theme) => ({
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center", // Center the content vertically
-    height: "100vh", // Adjust the height to center the content in the viewport
-    padding: theme.spacing(2),
-  },
-  heading: {
-    marginBottom: theme.spacing(2),
-  },
-  icon: {
-    fontSize: "64px",
-    marginBottom: theme.spacing(2),
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",
-    alignItems: "center",
-    "& .MuiTextField-root": {
-      margin: theme.spacing(1),
-      width: "300px",
-      border: `1px solid ${theme.palette.primary.main}`,
-    },
-    "& .MuiButton-root": {
-      margin: theme.spacing(2),
-    },
-  },
-  infoBox: {
-    margin: theme.spacing(2),
-    padding: theme.spacing(2),
-    border: `1px solid ${theme.palette.primary.main}`,
-    borderRadius: theme.spacing(1),
-    width: "400px",
-    textAlign: "center",
-  },
-  body: {
-    backgroundAttachment: "fixed",
-    backgroundSize: "cover",
-    display: "grid",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-    // backgroundImage: `url(${img})`,
-  },
-}));
+const styles = () => {
+  const body = css`
+    background-attachment: fixed;
+    background-size: cover;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 40%;
+    margin-left: 30%;
+  `;
+
+  const container = css`
+    width: 56rem;
+    height: max-content;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    position: relative;
+    z-index: 1;
+    background: inherit;
+    overflow: hidden;
+    padding: 50px;
+
+    &:before {
+      content: "";
+      position: absolute;
+      background: inherit;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      box-shadow: inset 0 0 2000px rgba(255, 255, 255, 0.5);
+      filter: blur(100px);
+      margin: -20px;
+    }
+  `;
+
+  const image = css`
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    z-index: 99;
+    position: relative;
+  `;
+
+  return {
+    container,
+    image,
+    body,
+  };
+};
+
+export default styles;
