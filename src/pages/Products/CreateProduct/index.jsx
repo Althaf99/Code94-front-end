@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
+import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Button, TextField, Typography, Grid } from "@mui/material";
 import PageLayout from "../../../components/PageLayout";
@@ -8,19 +9,25 @@ import axios from "axios";
 import styles from "./styles";
 import ArrowIcon from "../../../icons/arrowIcon";
 
+const BASE_URL = "http://localhost:9000/"; // Change this to your server's base URL
+
 const AddProduct = () => {
   const classes = styles();
   const userId = useSelector((state) => state.roleManager.userId);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [previewImages, setPreviewImages] = useState([]); // State to store image previews
+  const [previewImages, setPreviewImages] = useState([]);
 
+  const location = useLocation();
+  const productData = location.state?.productData || {};
+
+  // Initialize formik with initial values from productData
   const formik = useFormik({
     initialValues: {
-      sku: "",
-      productName: "",
-      qty: "",
-      price: "",
-      productDescription: "",
+      sku: productData.sku || "",
+      productName: productData.productName || "",
+      qty: productData.qty || "",
+      price: productData.price || "",
+      productDescription: productData.productDescription || "",
     },
     onSubmit: async (values) => {
       // Create FormData object
@@ -32,7 +39,6 @@ const AddProduct = () => {
       formData.append("price", values.price);
       formData.append("productDescription", values.productDescription);
 
-      // Append selected files to formData
       for (let i = 0; i < selectedFiles.length; i++) {
         formData.append("images", selectedFiles[i]);
       }
@@ -57,22 +63,14 @@ const AddProduct = () => {
     },
   });
 
-  // Handle file selection
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
-
-    // Update the selectedFiles state with new files, preserving existing selections
     setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
-
-    // Generate preview URLs for the newly selected images
     const previews = files.map((file) => URL.createObjectURL(file));
-
-    // Update the previewImages state to include new previews, preserving existing previews
     setPreviewImages((prevPreviews) => [...prevPreviews, ...previews]);
   };
 
-  // Remove image previews to free up memory when component unmounts
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       previewImages.forEach((url) => URL.revokeObjectURL(url));
     };
@@ -163,7 +161,21 @@ const AddProduct = () => {
               JPEG, PNG, SVG, or GIF (Maximum file size 50MB)
             </Typography>
 
-            {/* Display image previews */}
+            {/* Display existing product images */}
+            <Grid container spacing={2} sx={classes.previewContainer}>
+              {productData.images &&
+                productData.images.map((imagePath, index) => (
+                  <Grid item key={index}>
+                    <img
+                      src={`${BASE_URL}${imagePath}`}
+                      alt={`Product ${index}`}
+                      style={{ width: "100px", height: "100px" }}
+                    />
+                  </Grid>
+                ))}
+            </Grid>
+
+            {/* Display new image previews */}
             <Grid container spacing={2} sx={classes.previewContainer}>
               {previewImages.map((image, index) => (
                 <Grid item key={index}>
