@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Button, TextField, Typography, Grid } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import PageLayout from "../../../components/PageLayout";
 import LabeledTextField from "../../../components/LabeledTextField";
 import axios from "axios";
 import styles from "./styles";
 import ArrowIcon from "../../../icons/arrowIcon";
 import useProductMutation from "../../../hooks/useProductionMutation";
+
+import { styled } from "@mui/material/styles";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 
 const BASE_URL = "http://localhost:9000/";
 
@@ -75,6 +79,14 @@ const AddProduct = () => {
     };
   }, [previewImages]);
 
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+    ...theme.typography.body2,
+    padding: theme.spacing(2),
+    textAlign: "center",
+    color: theme.palette.text.secondary,
+  }));
+
   return (
     <PageLayout
       pageHeading={
@@ -90,7 +102,7 @@ const AddProduct = () => {
       }
     >
       <form onSubmit={formik.handleSubmit}>
-        <Grid container sx={classes.container}>
+        <Grid container>
           <Grid item xs={6}>
             <LabeledTextField
               id="sku"
@@ -164,7 +176,7 @@ const AddProduct = () => {
             <Grid container spacing={2} sx={classes.previewContainer}>
               {productData.images &&
                 productData.images.map((imagePath, index) => (
-                  <Grid item key={index}>
+                  <Grid item key={index} sx={12}>
                     <img
                       src={`${BASE_URL}${imagePath}`}
                       alt={`Product ${index}`}

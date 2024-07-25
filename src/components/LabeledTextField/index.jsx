@@ -33,7 +33,6 @@ const LabeledTextField = ({
         <TextField
           variant="outlined"
           size="small"
-          fullWidth
           inputProps={
             errors &&
             errors[name] && {

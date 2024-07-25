@@ -28,12 +28,15 @@ const styles = () => {
   `;
 
   const imageUpload = css`
+    padding-top: 30px;
     index: 999;
   `;
 
   const description = css`
     margin-bottom: 50px;
   `;
+
+  const previewContainer = css``;
   return {
     topCards,
     icon,

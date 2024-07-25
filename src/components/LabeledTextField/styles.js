@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 const styles = () => {
   const container = css`
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
     flex-wrap: wrap;
   `;
