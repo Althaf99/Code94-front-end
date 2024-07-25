@@ -37,7 +37,7 @@ const ProductOptionalPanel = ({ values, setSelectedProduct }) => {
   const { mutateAsync: createFavorites } = useCreateFavorites();
   const { mutateAsync: deleteFavorites } = useDeletefavorites();
   const deleteMutation = useDeleteProduct({
-    productId: values?.productId,
+    _id: values?._id,
   });
 
   const userId = useSelector((state) => state.roleManager.userId);

@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
-const useDeleteProduct = ({ productId }) => {
+const useDeleteProduct = ({ _id }) => {
   const QueryClient = useQueryClient();
-  const deleteRequestItem = `http://localhost:9000/products/${productId}`;
+  const deleteRequestItem = `http://localhost:9000/products/${_id}`;
 
   return useMutation(
     (obj) =>

@@ -40,7 +40,7 @@ const ListProducts = () => {
   const columns = [
     {
       Header: "ID",
-      accessor: "id",
+      accessor: "_id",
     },
     {
       Header: "PRODUCT_ID",
@@ -160,7 +160,7 @@ const ListProducts = () => {
             columns={columns}
             hasNextPage={false}
             data={products}
-            hiddenColumns={["id", "productId", "productDescription"]}
+            hiddenColumns={["_id", "productId", "productDescription"]}
             maxHeightInRows={15}
             customProps={{ height: "565px" }}
             onClickTableRow={(index, row) => {}}

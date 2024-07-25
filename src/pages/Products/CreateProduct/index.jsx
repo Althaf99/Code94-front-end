@@ -8,8 +8,9 @@ import LabeledTextField from "../../../components/LabeledTextField";
 import axios from "axios";
 import styles from "./styles";
 import ArrowIcon from "../../../icons/arrowIcon";
+import useProductMutation from "../../../hooks/useProductionMutation";
 
-const BASE_URL = "http://localhost:9000/"; // Change this to your server's base URL
+const BASE_URL = "http://localhost:9000/";
 
 const AddProduct = () => {
   const classes = styles();
@@ -19,6 +20,10 @@ const AddProduct = () => {
 
   const location = useLocation();
   const productData = location.state?.productData || {};
+  console.log("productData", productData._id);
+  // Determine if we are updating an existing product
+  const isUpdate = Boolean(productData.productId);
+  const mutation = useProductMutation(isUpdate);
 
   // Initialize formik with initial values from productData
   const formik = useFormik({
@@ -43,22 +48,17 @@ const AddProduct = () => {
         formData.append("images", selectedFiles[i]);
       }
 
-      try {
-        // Send POST request with formData to backend
-        const response = await axios.post("/products", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+      if (isUpdate) {
+        formData.append("_id", productData._id);
+      }
 
-        // Handle success
-        console.log("Product created successfully:", response.data);
+      try {
+        await mutation.mutateAsync(formData);
         formik.resetForm();
         setSelectedFiles([]);
         setPreviewImages([]);
       } catch (error) {
-        // Handle error
-        console.error("Error creating product:", error);
+        console.error("Error submitting product:", error);
       }
     },
   });
@@ -85,7 +85,7 @@ const AddProduct = () => {
             <ArrowIcon sx={classes.icon} />
           </Grid>
           <Grid item sx={classes.subHeading}>
-            Add New Product
+            {isUpdate ? "Edit Product" : "Add New Product"}
           </Grid>
         </Grid>
       }
@@ -193,7 +193,7 @@ const AddProduct = () => {
         <Grid item container justifyContent={"flex-end"}>
           <Grid item>
             <Button variant="contained" type="submit">
-              Save Product
+              {isUpdate ? "Update Product" : "Save Product"}
             </Button>
           </Grid>
         </Grid>

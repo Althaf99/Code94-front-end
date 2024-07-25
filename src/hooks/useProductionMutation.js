@@ -7,7 +7,7 @@ const useProductMutation = (isUpdate = false) => {
 
   return useMutation(
     async (formData) => {
-      const requestUrl = isUpdate ? `${url}/${formData.get("productId")}` : url;
+      const requestUrl = isUpdate ? `${url}/${formData.get("_id")}` : url;
       const method = isUpdate ? "PUT" : "POST";
 
       return await axios({
