@@ -12,23 +12,32 @@ import useGetProducts from "../../../hooks/useGetProducts";
 
 import styles from "./styles";
 import ProductOptionalPanel from "./optionalPanel";
+import useGetProductsByProductName from "../../../hooks/useGetProductsByProductName";
 
 const ListProducts = () => {
   const classes = styles();
   const navigate = useNavigate();
 
-  const [itemName, setItemName] = useState();
+  const [productName, setProductName] = useState();
   const [favorites, setFavorites] = useState([]);
 
   const [selectedProduct, setSelectedProduct] = useState();
 
-  console.log("selectedProduct", selectedProduct);
-
-  const itemNamesArray = [];
-
   const { data: products } = useGetProducts();
+  const { data: filteredProductList } = useGetProductsByProductName({
+    productName: productName ? productName : "",
+  });
+
+  const productListArray =
+    filteredProductList &&
+    filteredProductList.length > 0 &&
+    filteredProductList.map(({ id, productName }) => ({
+      name: productName,
+      value: productName,
+    }));
+
   let no = 0;
-  products?.forEach((element) => {
+  filteredProductList?.forEach((element) => {
     no = no + 1;
     element.no = no;
   });
@@ -130,12 +139,12 @@ const ListProducts = () => {
       <Grid item container justifyContent="space-between" xs={12}>
         <Grid item xs={3}>
           <SearchBar
-            id="itemName"
-            name="itemName"
+            id="productName"
+            name="productName"
             placeholder="Search for product"
-            onChange={(value) => setItemName(value)}
-            value={itemName}
-            items={itemNamesArray}
+            onChange={(value) => setProductName(value)}
+            value={productName}
+            items={productListArray}
           />
         </Grid>
         <Grid item>
@@ -155,11 +164,11 @@ const ListProducts = () => {
         </Grid>
       </Grid>
       <Grid item className={classes.section} xs={12}>
-        {products && (
+        {filteredProductList && (
           <DataTable
             columns={columns}
             hasNextPage={false}
-            data={products}
+            data={filteredProductList}
             hiddenColumns={["_id", "productId", "productDescription"]}
             maxHeightInRows={15}
             customProps={{ height: "565px" }}
