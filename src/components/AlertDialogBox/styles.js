@@ -8,7 +8,7 @@ const styles = (theme) => {
     text-align: center;
     align-content: center;
     align-items: center;
-    font-family: Nunito;
+    font-family: Satoshi, sans-serif;
     line-height: 20px;
   `;
 
@@ -53,7 +53,7 @@ const styles = (theme) => {
     color: ${theme.palette.common.blue};
     font-size: 1rem;
     font-weight: 400;
-    font-family: Nunito;
+    font-family: Satoshi, sans-serif;
     line-height: 20px;
     max-width: 450px;
     padding: 0px 5px;

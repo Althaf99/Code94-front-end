@@ -135,7 +135,7 @@ const ListProducts = () => {
   ];
 
   return (
-    <PageLayout pageHeading={"Products"} pageActions={<>Hello</>}>
+    <PageLayout pageHeading={"Products"}>
       <Grid item container justifyContent="space-between" xs={12}>
         <Grid item xs={3}>
           <SearchBar
@@ -169,7 +169,7 @@ const ListProducts = () => {
             columns={columns}
             hasNextPage={false}
             data={filteredProductList}
-            hiddenColumns={["_id", "productId", "productDescription"]}
+            hiddenColumns={["_id", "productId", "productDescription", "qty"]}
             maxHeightInRows={15}
             customProps={{ height: "565px" }}
             onClickTableRow={(index, row) => {}}

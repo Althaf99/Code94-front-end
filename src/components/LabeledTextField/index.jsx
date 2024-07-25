@@ -15,14 +15,25 @@ const LabeledTextField = ({
   const classes = styles();
 
   return (
-    <Grid item container flexWrap={"wrap"} columnSpacing={3}>
-      <Grid item sx={classes.label}>
-        {label}
-      </Grid>
+    <Grid
+      item
+      container
+      flexWrap={"wrap"}
+      justifyContent={"space-around"}
+      xs={12}
+      sx={classes.container}
+    >
       <Grid item>
+        <Grid item sx={classes.label}>
+          {label}
+        </Grid>
+      </Grid>
+
+      <Grid item sx={classes.textField}>
         <TextField
           variant="outlined"
           size="small"
+          fullWidth
           inputProps={
             errors &&
             errors[name] && {

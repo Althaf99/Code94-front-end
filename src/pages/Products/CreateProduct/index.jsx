@@ -20,7 +20,6 @@ const AddProduct = () => {
 
   const location = useLocation();
   const productData = location.state?.productData || {};
-  console.log("productData", productData._id);
   // Determine if we are updating an existing product
   const isUpdate = Boolean(productData.productId);
   const mutation = useProductMutation(isUpdate);
@@ -91,8 +90,8 @@ const AddProduct = () => {
       }
     >
       <form onSubmit={formik.handleSubmit}>
-        <Grid container spacing={3} sx={classes.container}>
-          <Grid item xs={12}>
+        <Grid container sx={classes.container}>
+          <Grid item xs={6}>
             <LabeledTextField
               id="sku"
               name="sku"
@@ -102,27 +101,27 @@ const AddProduct = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6}>
             <LabeledTextField
               id="productName"
               name="productName"
-              label="Product Name"
+              label="Name"
               onChange={(value) => formik.setFieldValue("productName", value)}
               value={formik.values.productName}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6}>
             <LabeledTextField
               id="qty"
               name="qty"
-              label="QTY"
+              label="Qty"
               onChange={(value) => formik.setFieldValue("qty", value)}
               value={formik.values.qty}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6}>
             <LabeledTextField
               id="price"
               name="price"
