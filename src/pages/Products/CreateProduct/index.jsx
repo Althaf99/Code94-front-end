@@ -1,28 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-
-import { Button, TextField, Typography } from "@mui/material";
-import { AddCircleOutlineOutlined, StarTwoTone } from "@mui/icons-material";
-
-import Grid from "@mui/material/Grid";
-
+import { useSelector } from "react-redux";
+import { Button, TextField, Typography, Grid } from "@mui/material";
 import PageLayout from "../../../components/PageLayout";
-import SearchBar from "../../../components/SearchBar";
 import LabeledTextField from "../../../components/LabeledTextField";
-import ImageUpload from "../../../components/ImageUploader";
-
+import axios from "axios";
 import styles from "./styles";
 import ArrowIcon from "../../../icons/arrowIcon";
-
-import useCreateProduct from "../../../hooks/useCreateProduct";
-import { useSelector } from "react-redux";
 
 const AddProduct = () => {
   const classes = styles();
   const userId = useSelector((state) => state.roleManager.userId);
-  console.log("userId", userId);
-  const { mutateAsync: createProduct } = useCreateProduct();
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]); // State to store image previews
 
   const formik = useFormik({
     initialValues: {
@@ -32,43 +22,61 @@ const AddProduct = () => {
       price: "",
       productDescription: "",
     },
+    onSubmit: async (values) => {
+      // Create FormData object
+      const formData = new FormData();
+      formData.append("userId", userId);
+      formData.append("sku", values.sku);
+      formData.append("productName", values.productName);
+      formData.append("qty", values.qty);
+      formData.append("price", values.price);
+      formData.append("productDescription", values.productDescription);
 
-    onSubmit: async () => {
-      const product = {
-        productName: formik.values.productName,
-        sku: formik.values.sku,
-        qty: formik.values.qty,
-        price: formik.values.price,
-        productDescription: formik.values.productDescription,
-        userId: userId,
-      };
-      createProduct(product);
-      //   try {
-      //     if (!selectedDelivery) {
-      //       await createDeliveryNote(DeliveryNote);
-      //       formik.resetForm();
-      //       setDeliveryNote([]);
-      //       setEnqueueSnackbar("Delivery Note Added Succesfully", "success");
-      //     } else {
-      //       const DeliveryNote = {
-      //         deliveryDate: formatDate(date),
-      //         itemName: formik.values.itemName,
-      //         itemColor: formik.values.itemColor,
-      //         quantity: formik.values.quantity,
-      //         description: formik.values.description,
-      //       };
-      //       await updateDeliveryNote(DeliveryNote);
-      //       formik.resetForm();
-      //       setDeliveryNote([]);
-      //       setEnqueueSnackbar("Delivery Note Updated Succesfully", "success");
-      //     }
-      //   } catch (value) {
-      //     setEnqueueSnackbar(
-      //       "Error Occured during Delivery Note Submission",
-      //       "error"      //     );
-      //   }
+      // Append selected files to formData
+      for (let i = 0; i < selectedFiles.length; i++) {
+        formData.append("images", selectedFiles[i]);
+      }
+
+      try {
+        // Send POST request with formData to backend
+        const response = await axios.post("/products", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        // Handle success
+        console.log("Product created successfully:", response.data);
+        formik.resetForm();
+        setSelectedFiles([]);
+        setPreviewImages([]);
+      } catch (error) {
+        // Handle error
+        console.error("Error creating product:", error);
+      }
     },
   });
+
+  // Handle file selection
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+
+    // Update the selectedFiles state with new files, preserving existing selections
+    setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
+
+    // Generate preview URLs for the newly selected images
+    const previews = files.map((file) => URL.createObjectURL(file));
+
+    // Update the previewImages state to include new previews, preserving existing previews
+    setPreviewImages((prevPreviews) => [...prevPreviews, ...previews]);
+  };
+
+  // Remove image previews to free up memory when component unmounts
+  React.useEffect(() => {
+    return () => {
+      previewImages.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previewImages]);
 
   return (
     <PageLayout
@@ -79,14 +87,13 @@ const AddProduct = () => {
             <ArrowIcon sx={classes.icon} />
           </Grid>
           <Grid item sx={classes.subHeading}>
-            add new project
+            Add New Product
           </Grid>
         </Grid>
       }
     >
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={3} sx={classes.container}>
-          {/* SKU Field */}
           <Grid item xs={12}>
             <LabeledTextField
               id="sku"
@@ -97,18 +104,16 @@ const AddProduct = () => {
             />
           </Grid>
 
-          {/* Name Field */}
           <Grid item xs={12} sm={6}>
             <LabeledTextField
-              id="name"
-              name="name"
-              label="Name"
+              id="productName"
+              name="productName"
+              label="Product Name"
               onChange={(value) => formik.setFieldValue("productName", value)}
               value={formik.values.productName}
             />
           </Grid>
 
-          {/* QTY Field */}
           <Grid item xs={12} sm={6}>
             <LabeledTextField
               id="qty"
@@ -118,6 +123,7 @@ const AddProduct = () => {
               value={formik.values.qty}
             />
           </Grid>
+
           <Grid item xs={12} sm={6}>
             <LabeledTextField
               id="price"
@@ -143,15 +149,35 @@ const AddProduct = () => {
               value={formik.values.productDescription}
             />
           </Grid>
+
           <Grid item xs={12} sx={classes.imageUpload}>
             <Grid sx={classes.label}>Product Images</Grid>
-
-            <ImageUpload />
+            <input
+              type="file"
+              name="images"
+              multiple
+              onChange={handleFileChange}
+              accept="image/*"
+            />
             <Typography variant="body2" color="textSecondary">
               JPEG, PNG, SVG, or GIF (Maximum file size 50MB)
             </Typography>
+
+            {/* Display image previews */}
+            <Grid container spacing={2} sx={classes.previewContainer}>
+              {previewImages.map((image, index) => (
+                <Grid item key={index}>
+                  <img
+                    src={image}
+                    alt={`Preview ${index}`}
+                    style={{ width: "100px", height: "100px" }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
         </Grid>
+
         <Grid item container justifyContent={"flex-end"}>
           <Grid item>
             <Button variant="contained" type="submit">
@@ -163,4 +189,5 @@ const AddProduct = () => {
     </PageLayout>
   );
 };
+
 export default AddProduct;
